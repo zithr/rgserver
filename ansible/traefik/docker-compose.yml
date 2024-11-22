@@ -1,0 +1,35 @@
+services:
+  reverse-proxy:
+    # The official v3 Traefik docker image
+    image: traefik:v3.2
+    command:
+      - --api.insecure=true # Enables the web UI 
+      - --providers.docker # Tells Traefik to listen to docker
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+      # can use this for global redirects, currently redirecting on service basis
+      # - --entrypoints.web.http.redirections.entrypoint.to=websecure
+      # - --entrypoints.web.http.redirections.entrypoint.scheme=https
+      - --certificatesresolvers.myresolver.acme.tlschallenge=true
+      - --certificatesresolvers.myresolver.acme.email={{ secrets.TRAEFIK.EMAIL }}
+      - --certificatesresolvers.myresolver.acme.storage=/acme.json
+    restart: unless-stopped
+    ports:
+      # The HTTP port
+      - 80:80
+        # The HTTPS port
+      - 443:443
+        # The TCP port
+      - 5432:5432
+        # The Web UI (enabled by --api.insecure=true)
+      - 8080:8080
+    volumes:
+      # So that Traefik can listen to the Docker events
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./data/traefik/acme.json:/acme.json
+    networks:
+      - traefiknet
+
+networks:
+  traefiknet:
+    external: true
