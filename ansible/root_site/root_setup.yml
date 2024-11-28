@@ -1,0 +1,26 @@
+# ansible-playbook ansible/root_site/root_setup.yml -i ansible/hosts -i /home/ramon/secrets/ansible_secrets/.ansible_rg
+
+# Note: modify the "src" locations to match correct source directories. 
+
+- hosts: my_servers
+  vars:
+    SOURCE_USERNAME: "{{ secrets.SOURCE_USERNAME }}"
+  tasks:
+    - name: Copy directory to VPS
+      synchronize:
+        mode: push
+        src: /home/{{ SOURCE_USERNAME }}/Code/rgserver/
+        dest: /home/root_site/
+        rsync_opts:
+          - "--exclude=ansible/"
+        delete: yes
+
+    - name: Copy docker-compose.yml file
+      template:
+        src: /home/{{ SOURCE_USERNAME }}/Code/rgserver/ansible/root_site/docker-compose.yml
+        dest: /home/root_site/docker-compose.yml
+
+    - name: Run Docker Compose
+      community.docker.docker_compose_v2:
+        project_src: /home/root_site/
+        build: always

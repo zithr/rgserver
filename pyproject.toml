@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "traefik"
+version = "0.1.0"
+description = "Traefik and root site"
+authors = ["Zithr <zithersorrow@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+litestar = {extras = ["standard"], version = "^2.12.1"}
+pydantic = "^2.9.2"
+loguru = "^0.7.2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
