@@ -8,27 +8,41 @@ services:
       - --entrypoints.web.address=:80
       - --entrypoints.websecure.address=:443
       # can use this for global redirects, currently redirecting on service basis
-      # - --entrypoints.web.http.redirections.entrypoint.to=websecure
-      # - --entrypoints.web.http.redirections.entrypoint.scheme=https
+      - --entrypoints.web.http.redirections.entrypoint.to=websecure
+      - --entrypoints.web.http.redirections.entrypoint.scheme=https
       - --certificatesresolvers.myresolver.acme.tlschallenge=true
       - --certificatesresolvers.myresolver.acme.email={{ secrets.TRAEFIK.EMAIL }}
       - --certificatesresolvers.myresolver.acme.storage=/acme.json
+      - --accesslog=true # Enable access logs
+      - --accesslog.filepath=/var/log/traefik/access.log
+      - --accesslog.format=json 
     restart: unless-stopped
     ports:
-      # The HTTP port
-      - 80:80
-        # The HTTPS port
-      - 443:443
-        # The TCP port
-      - 5432:5432
-        # The Web UI (enabled by --api.insecure=true)
-      - 8080:8080
+      - 80:80 # HTTP port
+      - 443:443 # HTTPS port
+      # - 5432:5432 # TCP port
+      # - 8080:8080 # The Web UI (enabled by --api.insecure=true), put Web UI on separate subdomain, see labels below
     volumes:
-      # So that Traefik can listen to the Docker events
-      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/run/docker.sock:/var/run/docker.sock # So that Traefik can listen to the Docker events
       - ./data/traefik/acme.json:/acme.json
+      - ./data/traefik/logs:/var/log/traefik
     networks:
       - traefiknet
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.api.rule=Host(`{{ secrets.TRAEFIK.SUBDOMAIN }}.{{ secrets.MY_DOMAIN }}`) || Host(`{{ secrets.TRAEFIK.SUBDOMAIN }}.{{ secrets.MY_DOMAIN_TWO }}`)
+      - traefik.http.routers.api.entryPoints=web,websecure
+      - traefik.http.routers.api.tls.certresolver=myresolver
+      - traefik.http.routers.api.service=api@internal
+      - traefik.http.services.api.loadbalancer.server.port={{ secrets.TRAEFIK.APPLICATION_PORT }}
+
+      # # HTTP router for redirecting to HTTPS
+      # - traefik.http.routers.api-http.rule=Host(`{{ secrets.TRAEFIK.SUBDOMAIN }}.{{ secrets.MY_DOMAIN }}`)
+      # - traefik.http.routers.api-http.entrypoints=web
+      # - traefik.http.routers.api-http.middlewares=redirect-to-https
+
+      # # Middleware for redirecting HTTP to HTTPS
+      # - traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https
 
 networks:
   traefiknet:

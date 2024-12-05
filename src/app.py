@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Annotated
 from loguru import logger
 
-from litestar import Litestar, get
+from litestar import Litestar, get, Response, Request
 from litestar.exceptions import NotAuthorizedException, ValidationException
 from litestar.contrib.jinja import JinjaTemplateEngine
 from litestar.static_files import create_static_files_router

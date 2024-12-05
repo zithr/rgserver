@@ -2,7 +2,8 @@
 
 # Note: modify the "src" locations to match correct source directories. 
 
-- hosts: my_servers
+- name: Create root site service
+  hosts: my_servers
   vars:
     SOURCE_USERNAME: "{{ secrets.SOURCE_USERNAME }}"
   tasks:

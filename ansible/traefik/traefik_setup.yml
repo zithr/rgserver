@@ -1,6 +1,6 @@
 # Execute with
-# ansible-playbook traefik_setup.yml -i ../hosts -i /home/ramon/secrets/ansible_secrets/.ansible_rg
-- name: Create service
+# ansible-playbook ansible/traefik/traefik_setup.yml -i ansible/hosts -i /home/ramon/secrets/ansible_secrets/.ansible_rg
+- name: Create Traefik service
   hosts: my_servers
   vars:
     USERNAME: "{{ secrets.TRAEFIK.USERNAME }}"
