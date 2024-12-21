@@ -1,0 +1,45 @@
+services:
+  wordpress:
+    image: wordpress:latest
+    container_name: wordpress
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: {{ secrets.WORDPRESS.DB_USER }}
+      WORDPRESS_DB_PASSWORD: {{ secrets.WORDPRESS.DB_PASSWORD }}
+      WORDPRESS_DB_NAME: {{ secrets.WORDPRESS.DB_NAME }}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.{{ secrets.WORDPRESS.USERNAME }}.rule=Host(`{{ secrets.WORDPRESS.SUBDOMAIN }}.rgprojects.me`)"
+      - "traefik.http.routers.{{ secrets.WORDPRESS.USERNAME }}.entryPoints=web,websecure"
+      - "traefik.http.routers.{{ secrets.WORDPRESS.USERNAME }}.tls.certresolver=myresolver"
+      - "traefik.http.services.{{ secrets.WORDPRESS.USERNAME }}.loadbalancer.server.port={{ secrets.WORDPRESS.APPLICATION_PORT }}"
+    volumes:
+      - wordpress_data:/var/www/html
+    depends_on:
+      - db
+    networks:
+      - {{ secrets.TRAEFIK_NETWORK }}
+      - internal
+
+  db:
+    image: mysql:5.7
+    container_name: wordpress_db
+    environment:
+      MYSQL_ROOT_PASSWORD: {{ secrets.WORDPRESS.MYSQL_ROOT_PASSWORD }}
+      MYSQL_DATABASE: {{ secrets.WORDPRESS.DB_NAME }}
+      MYSQL_USER: {{ secrets.WORDPRESS.DB_USER }}
+      MYSQL_PASSWORD: {{ secrets.WORDPRESS.DB_PASSWORD }}
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - internal
+
+volumes:
+  wordpress_data:
+  db_data:
+
+networks:
+  {{ secrets.TRAEFIK_NETWORK }}:
+    external: true
+  internal:
+    external: false

@@ -1,6 +1,7 @@
 
 services:
   litestar_server:
+    container_name: rootsite
     build:
       context: .
       dockerfile: Dockerfile

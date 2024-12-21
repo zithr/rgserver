@@ -1,0 +1,18 @@
+# ansible-playbook ansible/wordpress/wordpress_setup.yml -i ansible/hosts -i /home/ramon/secrets/ansible_secrets/.ansible_rg
+
+# Note: modify the "src" locations to match correct source directories. 
+
+- name: Create wordpress service
+  hosts: my_servers
+  vars:
+    SOURCE_USERNAME: "{{ secrets.SOURCE_USERNAME }}"
+  tasks:
+    - name: Copy docker-compose.yml file
+      template:
+        src: /home/{{ SOURCE_USERNAME }}/Code/rgserver/ansible/wordpress/docker-compose.yml
+        dest: /home/wordpress/docker-compose.yml
+
+    - name: Run Docker Compose
+      community.docker.docker_compose_v2:
+        project_src: /home/wordpress/
+        build: always
