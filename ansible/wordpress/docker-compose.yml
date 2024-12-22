@@ -9,7 +9,7 @@ services:
       WORDPRESS_DB_NAME: {{ secrets.WORDPRESS.DB_NAME }}
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.{{ secrets.WORDPRESS.USERNAME }}.rule=Host(`{{ secrets.WORDPRESS.SUBDOMAIN }}.{{ secrets.MY_DOMAIN }} `)"
+      - "traefik.http.routers.{{ secrets.WORDPRESS.USERNAME }}.rule=Host(`{{ secrets.WORDPRESS.SUBDOMAIN }}.{{ secrets.MY_DOMAIN }}`)"
       - "traefik.http.routers.{{ secrets.WORDPRESS.USERNAME }}.entryPoints=web,websecure"
       - "traefik.http.routers.{{ secrets.WORDPRESS.USERNAME }}.tls.certresolver=myresolver"
       - "traefik.http.services.{{ secrets.WORDPRESS.USERNAME }}.loadbalancer.server.port={{ secrets.WORDPRESS.APPLICATION_PORT }}"
