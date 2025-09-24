@@ -9,7 +9,7 @@ services:
       WORDPRESS_DB_NAME: {{ secrets.WORDPRESS.DB_NAME }}
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.{{ secrets.WORDPRESS.USERNAME }}.rule=Host(`{{ secrets.WORDPRESS.SUBDOMAIN }}.{{ secrets.MY_DOMAIN }}`)"
+      - "traefik.http.routers.{{ secrets.WORDPRESS.USERNAME }}.rule=Host(`{{ secrets.WORDPRESS.SUBDOMAIN }}.{{ secrets.MY_DOMAIN_TWO }}`)"
       - "traefik.http.routers.{{ secrets.WORDPRESS.USERNAME }}.entryPoints=web,websecure"
       - "traefik.http.routers.{{ secrets.WORDPRESS.USERNAME }}.tls.certresolver=myresolver"
       - "traefik.http.services.{{ secrets.WORDPRESS.USERNAME }}.loadbalancer.server.port={{ secrets.WORDPRESS.APPLICATION_PORT }}"
@@ -22,7 +22,7 @@ services:
       - internal
 
   db:
-    image: mysql:5.7
+    image: mysql:8.4
     container_name: wordpress_db
     environment:
       MYSQL_ROOT_PASSWORD: {{ secrets.WORDPRESS.MYSQL_ROOT_PASSWORD }}
