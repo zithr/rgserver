@@ -4,9 +4,9 @@ services:
     container_name: wordpress
     environment:
       WORDPRESS_DB_HOST: db:3306
-      WORDPRESS_DB_USER: {{ secrets.WORDPRESS.DB_USER }}
-      WORDPRESS_DB_PASSWORD: {{ secrets.WORDPRESS.DB_PASSWORD }}
-      WORDPRESS_DB_NAME: {{ secrets.WORDPRESS.DB_NAME }}
+      WORDPRESS_DB_USER: "{{ secrets.WORDPRESS.DB_USER }}"
+      WORDPRESS_DB_PASSWORD: "{{ secrets.WORDPRESS.DB_PASSWORD }}"
+      WORDPRESS_DB_NAME: "{{ secrets.WORDPRESS.DB_NAME }}"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.{{ secrets.WORDPRESS.USERNAME }}.rule=Host(`{{ secrets.WORDPRESS.SUBDOMAIN }}.{{ secrets.MY_DOMAIN_TWO }}`)"
@@ -18,17 +18,17 @@ services:
     depends_on:
       - db
     networks:
-      - {{ secrets.TRAEFIK_NETWORK }}
+      - "{{ secrets.TRAEFIK_NETWORK }}"
       - internal
 
   db:
     image: mysql:8.4
     container_name: wordpress_db
     environment:
-      MYSQL_ROOT_PASSWORD: {{ secrets.WORDPRESS.MYSQL_ROOT_PASSWORD }}
-      MYSQL_DATABASE: {{ secrets.WORDPRESS.DB_NAME }}
-      MYSQL_USER: {{ secrets.WORDPRESS.DB_USER }}
-      MYSQL_PASSWORD: {{ secrets.WORDPRESS.DB_PASSWORD }}
+      MYSQL_ROOT_PASSWORD: "{{ secrets.WORDPRESS.MYSQL_ROOT_PASSWORD }}"
+      MYSQL_DATABASE: "{{ secrets.WORDPRESS.DB_NAME }}"
+      MYSQL_USER: "{{ secrets.WORDPRESS.DB_USER }}"
+      MYSQL_PASSWORD: "{{ secrets.WORDPRESS.DB_PASSWORD }}"
     volumes:
       - db_data:/var/lib/mysql
     networks:
@@ -39,7 +39,7 @@ volumes:
   db_data:
 
 networks:
-  {{ secrets.TRAEFIK_NETWORK }}:
+  '{{ secrets.TRAEFIK_NETWORK }}':
     external: true
   internal:
     external: false

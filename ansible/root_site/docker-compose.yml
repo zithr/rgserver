@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: Dockerfile
     networks:
-      - {{ secrets.TRAEFIK_NETWORK }}
+      - "{{ secrets.TRAEFIK_NETWORK }}"
     # ports:
     #   - 8000:8000 # handled by traefik
     restart: unless-stopped
@@ -39,5 +39,5 @@ services:
       # - traefik.http.routers.{{ secrets.ROOTSITE.USERNAME }}.middlewares=authelia@docker
 
 networks:
-  {{ secrets.TRAEFIK_NETWORK }}:
+  "{{ secrets.TRAEFIK_NETWORK }}":
     external: true
