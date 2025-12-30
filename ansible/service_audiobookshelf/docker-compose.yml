@@ -1,0 +1,29 @@
+---
+networks:
+  '{{secrets.TRAEFIK_NETWORK}}':
+    external: true
+services:
+  audiobookshelf:
+    container_name: audiobookshelf
+    hostname: audiobookshelf
+    image: ghcr.io/advplyr/audiobookshelf
+    restart: unless-stopped
+    networks:
+      - '{{ secrets.TRAEFIK_NETWORK }}'
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.{{ SUBDOMAIN }}.entrypoints=web,websecure
+      - traefik.http.routers.{{ SUBDOMAIN }}.tls.certresolver=myresolver
+      - traefik.http.routers.{{ SUBDOMAIN }}.rule=Host(`{{ SUBDOMAIN }}.{{ secrets.MY_DOMAIN_TWO }}`)
+      - traefik.http.services.{{ SUBDOMAIN }}.loadbalancer.server.port={{ APPLICATION_PORT }}
+    volumes:
+      - ./config:/config
+      - ./metadata:/metadata
+      - '{{ secrets.AUDIOBOOKSHELF.MEDIA_FOLDER_AUDIOBOOKS }}:/audiobooks'
+      - '{{ secrets.AUDIOBOOKSHELF.MEDIA_FOLDER_PODCASTS }}:/podcasts'
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: '1'
+          memory: 2048M
