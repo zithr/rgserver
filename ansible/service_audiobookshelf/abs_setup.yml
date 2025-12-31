@@ -1,6 +1,6 @@
 # Execute with
 # ansible-playbook ansible/service_audiobookshelf/abs_setup.yml -i ansible/hosts -i /home/ramon/secrets/ansible_secrets/.ansible_rg
-- name: Create Traefik service
+- name: Create Audiobookshelf service
   hosts: my_servers
   vars:
     USERNAME: '{{ secrets.AUDIOBOOKSHELF.USERNAME }}'
