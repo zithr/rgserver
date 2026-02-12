@@ -7,6 +7,9 @@ services:
       WORDPRESS_DB_USER: "{{ secrets.WORDPRESS.DB_USER }}"
       WORDPRESS_DB_PASSWORD: "{{ secrets.WORDPRESS.DB_PASSWORD }}"
       WORDPRESS_DB_NAME: "{{ secrets.WORDPRESS.DB_NAME }}"
+    # Expose ports for first time wordpress web installation
+    # ports:
+    #   - "8085:80"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.{{ secrets.WORDPRESS.USERNAME }}.rule=Host(`{{ secrets.WORDPRESS.SUBDOMAIN }}.{{ secrets.MY_DOMAIN_TWO }}`)"
